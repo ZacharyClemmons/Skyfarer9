@@ -175,6 +175,8 @@ func _ready() -> void:
 		if args.has("at"):
 			var parts: PackedStringArray = args["at"].split(",")
 			Game.player.place(Vector2i(int(parts[0]), int(parts[1])))
+		if args.has("rich"):
+			Economy.infinite = true
 		if args.has("onisland"):
 			# stand in the middle of the home island, for looking at the place
 			if not gen.home.is_empty():

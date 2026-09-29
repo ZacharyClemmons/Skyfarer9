@@ -714,6 +714,12 @@ static func _debug_menu(body: VBoxContainer, p: Entity) -> void:
 		if lm:
 			lm.visible = not lm.visible)
 	_toggle(r3, "God mode", Game.god_mode, func(): Game.god_mode = not Game.god_mode)
+	var rm := _row(body)
+	_toggle(rm, "Unlimited money", Economy.infinite, func():
+		Economy.infinite = not Economy.infinite
+		Bus.powers_changed.emit()
+		Game.msg("[color=#e8c85a]Unlimited money %s.[/color]" % ("ON — every purchase is free" if Economy.infinite else "off"), "info"))
+	_btn(rm, "+10,000 marks", func(): if p != null: Economy.give(p, 10000))
 	_rt(body, "[b]Time[/b]  (now x%s)" % str(Game.time_scale))
 	var r4 := _row(body)
 	for sp in [0.5, 1.0, 2.0, 4.0, 8.0]:

@@ -123,6 +123,7 @@ var purse_label: Label
 var commit_btn: Button
 var mirror_btn: Button
 var leaks_btn: Button
+var rich_btn: Button
 var undo_btn: Button
 var redo_btn: Button
 var name_edit: LineEdit
@@ -410,6 +411,9 @@ func _build_ui() -> void:
 	_footer_btn("Wrap hull [F]", func(): _wrap_hull(), "Put bulwark all the way round the deck you have drawn. (F)")
 	leaks_btn = _footer_btn("Leaks & draughts [L]", func(): _toggle_leaks(), "Highlight every cabin tile that is open to the weather (red) and the draught the wind will carry in behind it (blue). (L)")
 	leaks_btn.toggle_mode = true
+	rich_btn = _footer_btn("Unlimited money: %s" % ("on" if Economy.infinite else "off"), func(): _toggle_rich(), "Testing: build and buy anything for free.")
+	rich_btn.toggle_mode = true
+	rich_btn.button_pressed = Economy.infinite
 	undo_btn = _footer_btn("Undo", func(): _do_undo(), "Ctrl+Z")
 	redo_btn = _footer_btn("Redo", func(): _do_redo(), "Ctrl+Y")
 	_footer_btn("Fit [C]", func(): _center_view(true), "Fit the whole hull on the board. (C)")
@@ -1563,6 +1567,15 @@ func _fill_rect(r: Rect2i, erase: bool) -> void:
 ## the cursor: the odd lantern, the single gun on one beam, the off-centre hatch.
 func _mirroring() -> bool:
 	return mirror and not Input.is_key_pressed(KEY_ALT)
+
+func _toggle_rich() -> void:
+	Economy.infinite = not Economy.infinite
+	if rich_btn != null:
+		rich_btn.text = "Unlimited money: %s" % ("on" if Economy.infinite else "off")
+		rich_btn.set_pressed_no_signal(Economy.infinite)
+	Bus.powers_changed.emit()
+	_refresh_stats()
+	_say("Unlimited money %s." % ("on — the yard master waves off the bill" if Economy.infinite else "off"))
 
 func _toggle_mirror() -> void:
 	mirror = not mirror

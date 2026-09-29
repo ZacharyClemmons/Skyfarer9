@@ -23,9 +23,16 @@ const HAGGLE_BUY := 0.22   # pay this much less at mastery
 const HAGGLE_SELL := 0.28  # get this much more at mastery
 
 # ------------------------------------------------------------------ the purse
+## Debug: the player can afford anything and nothing is ever deducted. Toggled from the
+## F10 menu (or --rich on the command line) so shops and the yard can be tested freely.
+static var infinite := false
+const INFINITE_PURSE := 9999999
+
 static func purse(who: Entity) -> int:
 	if who == null or not is_instance_valid(who):
 		return 0
+	if infinite and who == Game.player:
+		return INFINITE_PURSE
 	return int(who.tags.get("marks", 0))
 
 static func set_purse(who: Entity, v: int) -> void:
@@ -48,6 +55,8 @@ static func can_afford(who: Entity, cost: int) -> bool:
 static func take(who: Entity, cost: int) -> bool:
 	if not can_afford(who, cost):
 		return false
+	if infinite and who == Game.player:
+		return true
 	set_purse(who, purse(who) - cost)
 	return true
 
