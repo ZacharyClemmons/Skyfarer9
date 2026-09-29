@@ -404,7 +404,7 @@ func _build_ui() -> void:
 	footer = HBoxContainer.new()
 	footer.add_theme_constant_override("separation", 6)
 	root.add_child(footer)
-	mirror_btn = _footer_btn("Mirror: on [M]", func(): _toggle_mirror(), "Ships are symmetrical. Draw one side and get the other. (M)")
+	mirror_btn = _footer_btn("Mirror: on [M]", func(): _toggle_mirror(), "Ships are symmetrical. Draw one side and get the other. (M) Hold Alt while placing to put down just one.")
 	mirror_btn.toggle_mode = true
 	mirror_btn.button_pressed = true
 	_footer_btn("Wrap hull [F]", func(): _wrap_hull(), "Put bulwark all the way round the deck you have drawn. (F)")
@@ -1025,7 +1025,7 @@ func _place_reason(key: Vector2i, erase: bool) -> String:
 func _draw_hover(cv: Control, z: float, f: Font) -> void:
 	var erasing := _painting == 2 or (module_brush == "" and brush < BRUSHES.size() and String(BRUSHES[brush]["g"]) == "")
 	var keys: Array = [_hover]
-	if mirror and _hover.y != 0:
+	if _mirroring() and _hover.y != 0:
 		keys.append(Vector2i(_hover.x, -_hover.y))
 	var gcol := Color("#7fd4ff")
 	if module_brush != "":
@@ -1140,7 +1140,7 @@ func _draw_overlays(cv: Control, z: float, f: Font, b: Rect2i) -> void:
 		cv.draw_rect(Rect2(tx, ty, mw2, 28), Color(0.5, 0.75, 1.0, 0.6 * a), false, 1.0)
 		cv.draw_string(f, Vector2(tx + 12, ty + 20), _message, HORIZONTAL_ALIGNMENT_LEFT, -1, UITheme.BODY, Color(1, 1, 1, a))
 	# ---- the keys
-	cv.draw_string(f, Vector2(12, sz.y - 12), "LMB paint · RMB erase · Shift+drag rectangle · MMB pan · wheel zoom · M mirror · F wrap · L leaks · Ctrl+Z undo · C fit",
+	cv.draw_string(f, Vector2(12, sz.y - 12), "LMB paint · RMB erase · Shift+drag rectangle · MMB pan · wheel zoom · M mirror (hold Alt: one side only) · F wrap · L leaks · Ctrl+Z undo · C fit",
 		HORIZONTAL_ALIGNMENT_LEFT, sz.x - 170.0, 12, Color(0.6, 0.75, 0.9, 0.55))
 	cv.draw_string(f, Vector2(12, 18), "ZOOM %d%%" % int(zoom * 100.0), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.6, 0.75, 0.9, 0.5))
 
@@ -1403,7 +1403,7 @@ func _burst(key: Vector2i, col: Color, n: int, erase: bool) -> void:
 # ------------------------------------------------------------------ editing
 func _apply_brush(key: Vector2i, erase: bool) -> void:
 	var changed := _set_one(key, erase)
-	if mirror and key.y != 0 and not (palette_tab == "lower" and lower_brush == "stairs" and not erase):
+	if _mirroring() and key.y != 0 and not (palette_tab == "lower" and lower_brush == "stairs" and not erase):
 		changed = _set_one(Vector2i(key.x, -key.y), erase) or changed
 	if changed:
 		_stroke_n += 1
@@ -1544,7 +1544,7 @@ func _fill_rect(r: Rect2i, erase: bool) -> void:
 	for y in range(r.position.y, r.end.y):
 		for x in range(r.position.x, r.end.x):
 			var a := _set_one(Vector2i(x, y), erase)
-			if mirror and y != 0 and not (palette_tab == "lower" and lower_brush == "stairs" and not erase):
+			if _mirroring() and y != 0 and not (palette_tab == "lower" and lower_brush == "stairs" and not erase):
 				a = _set_one(Vector2i(x, -y), erase) or a
 			if a:
 				n += 1
@@ -1558,6 +1558,11 @@ func _fill_rect(r: Rect2i, erase: bool) -> void:
 		Sfx.play_ui(&"ui_tick", 0.6, 1.4)
 		_say("%s %d tile%s." % ["Cleared" if erase else "Filled", n, "" if n == 1 else "s"])
 	_refresh_stats()
+
+## Mirror is on for the board, but holding Alt places (or erases) just the one tile under
+## the cursor: the odd lantern, the single gun on one beam, the off-centre hatch.
+func _mirroring() -> bool:
+	return mirror and not Input.is_key_pressed(KEY_ALT)
 
 func _toggle_mirror() -> void:
 	mirror = not mirror

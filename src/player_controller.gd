@@ -316,6 +316,9 @@ func _unhandled_input(ev: InputEvent) -> void:
 				if focus:
 					focus.release_focus()
 			return
+		if ev.physical_keycode == KEY_E and ev.shift_pressed and Underdecks.toggle_hatch(p):
+			get_viewport().set_input_as_handled()
+			return
 		if ev.physical_keycode == KEY_E and Underdecks.use(p):
 			get_viewport().set_input_as_handled()
 			return

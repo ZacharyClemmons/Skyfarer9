@@ -50,6 +50,9 @@ Useful flags (after `--`):
 | I | the drawing board, on the ship you are standing on (refit) | |
 | P | skills | |
 | F5 | first-person view | F7 hide the tutorial prompts |
+| E on a stair | go up / down the companionway |
+| Shift + E on a stair | dog the hatch shut / throw it open |
+| Alt (yard) | place or erase one tile only, ignoring the mirror |
 | Shift + direction | step off a ledge on purpose — nothing else will | |
 
 **The opening.** Pick a **trade** in the creator — what you were before you had a ship
@@ -173,6 +176,20 @@ altitude cue, three parallax cloud decks drifting against the camera (which is t
 thing telling a player that a hull pinned to the middle of the screen is moving), a sun
 that tracks the clock, stars, aurora, and the weather wash. Posterised at the end so it
 sits with the pixel art rather than behind glass.
+
+**The ship fights back.** `ShipHazards` ticks the player's hull twice a second. Apparent
+wind is the sky's wind minus your own velocity; every opening from the weather deck into
+a room (hole, open door) blows a draught along the passage behind it, which steals heat
+from the room, gutters lanterns, chills people and fans fire. On open deck with no wall
+beside you, a gale slows you and can throw you down. Fire burns the planking it stands on
+(a burnt-through deck is a breach) and spreads downwind. A crash, a breach or a flogging
+in a gale opens the seams; the lower deck fills, wading slows you, and the water is real
+weight. The bilge pump beside the stair pumps out and caulks with planks. Heat and smoke
+climb the companionway unless the hatch is shut (Shift+E), which also starves a galley
+fire of air. `ShipSurvey` runs the same rules on the drawing board: **L** shows leaks
+(red) and the draught behind them (blue), and the issue list warns about stoves by fuel,
+bare decks, open wheels and missing lower decks. `DeckFx` boxes in the lower deck with
+ribbed timber and portholes and labels the deck you are on.
 
 ## What's built and verified
 

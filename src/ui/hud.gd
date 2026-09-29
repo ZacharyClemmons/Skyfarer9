@@ -805,6 +805,10 @@ func fit_panel(pn: Control) -> void:
 		_:
 			pn.offset_bottom = pn.offset_top + ms.y
 
+func _hatch_shut(p: Entity) -> bool:
+	var sh: Airship = Game.fleet.ship_of(p) if Game.fleet != null else null
+	return sh != null and sh.hatch_shut
+
 func set_zone(z: String) -> void:
 	if Game.player == null:
 		return
@@ -1778,7 +1782,7 @@ func _update_status(p: Entity) -> void:
 	# "the Long Sky" is a fact the player needs far more often than "Open Sky".
 	var place := area.name
 	if Underdecks.stair_at(p.cell):
-		place += "  [E: stairs]"
+		place += "  [E: stairs · Shift+E: %s hatch]" % ("open" if _hatch_shut(p) else "shut")
 	if Game.sky != null and Game.sky.gen != null:
 		var ring: String = Game.sky.gen.ring_name_at(Underdecks.world_cell(p))
 		if not place.contains(ring):

@@ -160,12 +160,29 @@ static func ensure(sh: Airship) -> void:
 	if sh.renderer != null and is_instance_valid(sh.renderer):
 		sh.renderer.queue_redraw()
 
+## Shift+E on the stair. A shut hatch keeps smoke, heat and draught where they are and
+## starves a galley fire of air, at the price of everyone below being shut in with it.
+static func toggle_hatch(p: Entity) -> bool:
+	if p == null or Game.fleet == null or not stair_at(p.cell):
+		return false
+	var sh: Airship = Game.fleet.ship_of(p)
+	if sh == null or sh.lower_cells.is_empty():
+		return false
+	sh.hatch_shut = not sh.hatch_shut
+	Sfx.play("ratchet", p.cell, 0.7)
+	Game.tell(p, "You dog the companionway hatch shut. The galley is sealed off." if sh.hatch_shut
+		else "You throw the hatch open. Air moves between the decks again.", "info")
+	return true
+
 static func use(p: Entity) -> bool:
 	if p == null or Game.fleet == null:
 		return false
 	var sh: Airship = Game.fleet.ship_of(p)
 	if sh == null or sh.lower_cells.is_empty():
 		return false
+	if sh.hatch_shut and (p.cell == _upper_cell(sh) or p.cell == sh.lower_stair):
+		Game.tell(p, "The hatch is dogged shut. (Shift+E to open it.)", "warn")
+		return true
 	var dest := Vector2i(-1, -1)
 	var descending := false
 	if p.cell == _upper_cell(sh):

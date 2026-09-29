@@ -89,6 +89,7 @@ var lower_cells: Array = [] # the instanced, physically separate deck below
 var lower_stair := Vector2i(-1, -1)
 var upper_stair_local := Vector2i(-9999, -9999)
 var lower_parts: Array = []
+var hatch_shut := false # the companionway hatch: shut, it seals the galley from the deck
 var bilge := 0.0 # 0..1 how much water is standing on the lower deck
 var seam := 0.0 # 0..1 how badly her seams weep; a crash or a flogging in a gale opens them
 var lower_plan := {} # local hull cell -> lower floor or wall glyph

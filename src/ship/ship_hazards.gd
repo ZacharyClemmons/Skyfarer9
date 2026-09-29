@@ -265,7 +265,7 @@ static func _fire(sh: Airship, st: Dictionary, aw: float, dt: float) -> void:
 ## way a galley fire reaches the weather deck, and the only way a cold deck gets warmed.
 static func _companionway(sh: Airship, dt: float) -> void:
 	var atmos = Game.atmos
-	if atmos == null or sh.lower_cells.is_empty() or sh.lower_stair.x < 0:
+	if atmos == null or sh.lower_cells.is_empty() or sh.lower_stair.x < 0 or sh.hatch_shut:
 		return
 	var top := Vector2i(sh.cell(sh.upper_stair_local.x, sh.upper_stair_local.y))
 	var map := Game.map
