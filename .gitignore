@@ -1,0 +1,11 @@
+.godot/
+*.import
+Artic9.exe
+Skyfarer9.exe
+Skyfarer9_console.exe
+build/
+tools/artgen/__pycache__/
+tools/artgen/preview.png
+tools/artgen/mob_preview.png
+tools/artgen/icon_preview.png
+tools/artgen/icons_src/__pycache__/
