@@ -61,6 +61,7 @@ static func glyph_cost(g: String) -> int:
 		"w": return 44
 		"+": return 34
 		"A": return 62
+		"J": return 74
 		"=": return 12
 		".", ",": return 8
 		"O": return 70

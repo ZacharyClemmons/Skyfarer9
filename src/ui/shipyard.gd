@@ -52,6 +52,7 @@ const BRUSHES := [
 	{"g": "I", "name": "Bulkhead", "col": "#5a5a64", "hint": "Full-height interior wall. Blocks sight, and seals a cabin."},
 	{"g": "W", "name": "Window", "col": "#6aa8c8", "hint": "Glass in the hull. Seals like a bulkhead and you can see out."},
 	{"g": "+", "name": "Cabin door", "col": "#8a7a4a", "hint": "A way between two sealed spaces that keeps them sealed."},
+	{"g": "J", "name": "Boarding ramp", "col": "#9a7a4a", "hint": "Looks like a sealed plate in the ship's side. Use it alongside a quay and a ramp swings out. Put it on the outer edge."},
 	{"g": "A", "name": "Hull hatch", "col": "#c88a3a", "hint": "An airlock through the hull, for going on deck at altitude."},
 	{"grp": "Mountings", "g": "E", "name": "Thruster mount", "col": "#c85a3a", "hint": "A hole for an engine. Exhausts into whatever room it is in."},
 	{"g": "p", "name": "Airscrew mount", "col": "#9a6a4a", "hint": "For an airscrew: small push, real turning authority."},

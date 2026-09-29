@@ -12,7 +12,7 @@ const OBJ := {
 	"O": "ballast_tank", "g": "gun_e", "C": "cargo_winch", "v": "vent", "s": "scrubber",
 	"*": "deck_lantern", "b": "bed_0", "k": "crate_gen", "c": "chair_shuttle_e",
 	"t": "table_steel", "d": "table_wood", "f": "galley_stove", "M": "med_bed",
-	"l": "locker_gen", "o": "locker_emerg", "+": "airlock_generic_0", "A": "airlock_ext_0",
+	"l": "locker_gen", "o": "locker_emerg", "+": "airlock_generic_0", "A": "airlock_ext_0", "J": "airlock_cargo_0",
 	"r": "rudder_post",
 }
 const UTIL_OBJ := {
@@ -97,7 +97,7 @@ static func draw_cell(cv: CanvasItem, r: Rect2, key: Vector2i, glyph: String, mo
 				draw_obj(cv, o, r, col)
 			else:
 				ok = false
-	if glyph == "+" or glyph == "A":
+	if glyph == "+" or glyph == "A" or glyph == "J":
 		_terr(cv, "deck_%d" % v, r, col)
 		var d := obj_for(glyph, module)
 		if d != "":

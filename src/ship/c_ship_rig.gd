@@ -133,7 +133,7 @@ func _remove(user: Entity, sh: Airship, c: Vector2i, local: Vector2i) -> bool:
 func _material_of(ch: String) -> String:
 	if ch in ShipPlan.WINDOWS:
 		return "glass"
-	if ch in ["+", "A"]:
+	if ch in ["+", "A", "J"]:
 		return "metal"
 	if ch in [",", ".", "=", "#", "K", "I"]:
 		return "wood"

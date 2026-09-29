@@ -800,6 +800,7 @@ static func make_comp(cname: String, p: Dictionary) -> Component:
 		"furniture": return CFurniture.new().setup(p)
 		"cooker": return CCooker.new()
 		"bilge_pump": return CBilgePump.new()
+		"ramp": return CRamp.new()
 		"breach_patch": return CBreachPatch.new()
 		"hydro": return CHydro.new().setup(p)
 		"botany": return CBotany.new().setup(p)

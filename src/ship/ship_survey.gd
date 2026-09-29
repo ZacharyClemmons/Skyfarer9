@@ -29,7 +29,7 @@ static func draught_map(cells: Dictionary) -> Dictionary:
 				if seen.has(n) or not cells.has(n):
 					continue
 				var g := String(cells[n])
-				if g in ShipPlan.WALLS or g in ShipPlan.WINDOWS or g == "I" or g in ShipPlan.OPEN_DECK or g == "A":
+				if g in ShipPlan.WALLS or g in ShipPlan.WINDOWS or g == "I" or g in ShipPlan.OPEN_DECK or g == "A" or g == "J":
 					continue
 				if not sealed.has(n) and not leaks.has(n):
 					continue
@@ -89,6 +89,16 @@ static func diagnose(cells: Dictionary, lower_plan: Dictionary, lower_entry: Vec
 			deck_n += 1
 	if deck_n >= 6 and bare.size() * 10 >= deck_n * 8:
 		out.append(_d("info", "no_lee", "Almost all of her deck is bare: no bulwark, no wall to get behind. Crew caught out in a blow have nothing to hold.", []))
+	# boarding ramps have to face open sky or shore
+	for k in cells:
+		if String(cells[k]) != "J":
+			continue
+		var faces := false
+		for d in Defs.DIRS4:
+			if not cells.has(k + d):
+				faces = true
+		if not faces:
+			out.append(_d("warn", "buried_ramp", "A boarding ramp with no open side has nowhere to swing out. Put it on the outer edge of the hull.", [k]))
 	# the lower deck
 	if lower_plan.is_empty():
 		out.append(_d("info", "no_hold", "No lower deck drawn. There will be no galley to warm up in, and nowhere to stow a pump.", []))

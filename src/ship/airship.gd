@@ -90,6 +90,8 @@ var lower_stair := Vector2i(-1, -1)
 var upper_stair_local := Vector2i(-9999, -9999)
 var lower_parts: Array = []
 var hatch_shut := false # the companionway hatch: shut, it seals the galley from the deck
+var _gangway_note := -99.0
+var gangway := {} # the boarding ramp, while it is out (see Gangway)
 var bilge := 0.0 # 0..1 how much water is standing on the lower deck
 var seam := 0.0 # 0..1 how badly her seams weep; a crash or a flogging in a gale opens them
 var lower_plan := {} # local hull cell -> lower floor or wall glyph
@@ -636,6 +638,7 @@ func _fit(ch: String, c: Vector2i, local := Vector2i(99999, 99999)) -> Entity:
 	match ch:
 		"+": return Proto.spawn("ship_door", c, {"name": "%s hatch" % ship_name})
 		"A": return Proto.spawn("ship_airlock", c, {"name": "%s hull hatch" % ship_name})
+		"J": return Proto.spawn("ship_ramp", c, {"name": "%s boarding ramp" % ship_name})
 		"h":
 			helm = Proto.spawn("ship_helm", c, {"name": "%s's wheel" % ship_name})
 			helm.c(&"helm").ship_id = id
@@ -1199,6 +1202,13 @@ func fly(delta: float) -> void:
 		return
 	_visual_fx(delta)
 	_crash_t = maxf(0.0, _crash_t - delta)
+	if not gangway.is_empty():
+		# made fast: nothing moves her while the ramp is out
+		vel = Vector2.ZERO
+		if throttle > 0.05 and Game.time - _gangway_note > 6.0 and Game.fleet != null and Game.fleet.ship_of(Game.player) == self:
+			_gangway_note = Game.time
+			Game.msg("[color=#e8a83a]The boarding ramp is still out. Haul it in before you cast off.[/color]", "warn")
+		return
 	_turn(delta)
 	var m := maxf(1.0, mass())
 	var force := Vector2(cos(angle), sin(angle)) * thrust() + sail_force()
@@ -1763,6 +1773,7 @@ func status_text() -> String:
 # ------------------------------------------------------------------ leaving
 ## Take the ship (and everyone on it) out of the region.
 func remove() -> Array:
+	Gangway.retract(self, true)
 	var aboard := occupants()
 	var leaving := []
 	for c in cells + lower_cells:

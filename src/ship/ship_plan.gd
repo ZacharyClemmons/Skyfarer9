@@ -236,7 +236,7 @@ static func sealed_of(cells: Dictionary) -> Dictionary:
 	var q: Array = []
 	for k in cells:
 		var ch: String = cells[k]
-		if ch in WALLS or ch in WINDOWS or ch == "I" or ch == "+" or ch == "A":
+		if ch in WALLS or ch in WINDOWS or ch == "I" or ch == "+" or ch == "A" or ch == "J":
 			blocks[k] = true
 		elif ch in OPEN_DECK:
 			q.append(k)
@@ -350,7 +350,7 @@ static func sealed_cells(plan: Array, keel: int) -> Dictionary:
 	for spec in occupied(plan, keel):
 		var key := Vector2i(spec[0], spec[1] + keel)
 		var ch: String = spec[2]
-		if ch in WALLS or ch in WINDOWS or ch == "I" or ch == "+" or ch == "A":
+		if ch in WALLS or ch in WINDOWS or ch == "I" or ch == "+" or ch == "A" or ch == "J":
 			blocks[key] = true
 		elif ch in OPEN_DECK:
 			weather.append(key)
