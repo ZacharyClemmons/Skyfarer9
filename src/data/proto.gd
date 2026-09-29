@@ -799,6 +799,7 @@ static func make_comp(cname: String, p: Dictionary) -> Component:
 		"vending": return CVending.new().setup(p)
 		"furniture": return CFurniture.new().setup(p)
 		"cooker": return CCooker.new()
+		"bilge_pump": return CBilgePump.new()
 		"hydro": return CHydro.new().setup(p)
 		"botany": return CBotany.new().setup(p)
 		"reagents": return CReagents.new().setup(p)

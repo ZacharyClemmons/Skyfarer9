@@ -136,6 +136,13 @@ func _process(delta: float) -> void:
 	var t := SPerf.t0()
 	_tick_parts(d)
 	SPerf.end("parts", t)
+	_hazard_t += d
+	if _hazard_t >= ShipHazards.TICK:
+		var hs := ship_of(Game.player) if Game.player != null and is_instance_valid(Game.player) else null
+		if hs == null:
+			hs = player_ship
+		ShipHazards.tick(hs, _hazard_t)
+		_hazard_t = 0.0
 	t = SPerf.t0()
 	traffic.process(delta)
 	SPerf.end("traffic", t)
@@ -173,6 +180,7 @@ func _process(delta: float) -> void:
 const FAR_TILES := 110.0
 const FAR_STEP := 0.1
 var _far_acc := {}
+var _hazard_t := 0.0
 
 func far_from_player(s: Airship, pcell: Vector2i) -> bool:
 	if s == player_ship or pcell.x < -90000:

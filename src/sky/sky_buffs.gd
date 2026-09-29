@@ -21,14 +21,14 @@ const NAMES := {
 	"armor": "hardened", "altitude": "deep-breathing", "no_fall": "anchored",
 	"wind_immune": "unmoved", "good_air": "untroubled", "quiet": "unheard",
 	"sight": "far-sighted", "luck": "fortunate", "bleed": "bleeding", "chill": "freezing",
-	"scorch": "scorched", "static": "charged", "blind": "dazzled", "sticky": "mired",
+	"scorch": "scorched", "static": "charged", "blind": "dazzled", "sticky": "mired", "draught": "chilled by a draught", "wading": "wading",
 }
 const COLORS := {
 	"speed": "#6ad88a", "carry": "#e8a83a", "xp": "#c88ae8", "armor": "#7fd4ff",
 	"altitude": "#6ad88a", "no_fall": "#e8c85a", "wind_immune": "#7fd4ff",
 	"good_air": "#6ad88a", "quiet": "#8aa0b4", "sight": "#7fd4ff", "luck": "#e8c85a",
 	"slow": "#e8a83a", "bleed": "#ff6a6a", "chill": "#9ad8ff", "scorch": "#ff8a5a",
-	"static": "#9ad8ff", "blind": "#ff8a5a", "sticky": "#8a7a5a",
+	"static": "#9ad8ff", "blind": "#ff8a5a", "sticky": "#8a7a5a", "draught": "#9ad8ff", "wading": "#8ac0e8",
 }
 
 static func apply(ent: Entity, key: String, value: float, dur: float, source := "") -> void:

@@ -257,6 +257,7 @@ func _rebuild() -> void:
 	if _open("Bunkers"):
 		_stat("fuelrow", "")
 		_stat("range", "")
+		_stat("hazards", "")
 
 	if not ship.masts.is_empty() and _open("Sails"):
 		_stat("sails", "")
@@ -438,6 +439,7 @@ func _refresh() -> void:
 	var secs := ship.endurance()
 	_put("range", "[color=#8aa0b4]About %s at full throttle, or %s at cruise.[/color]" % [
 		_dur(secs), _dur(secs * 2.4)])
+	_put("hazards", "[color=#8aa0b4]%s[/color]" % ShipHazards.report(ship))
 
 	if not ship.masts.is_empty():
 		var wind := ""

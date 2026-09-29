@@ -15,6 +15,7 @@ class StairMark extends Node2D:
 		Underdecks.paint_stair(self, Vector2(-Defs.TILE * 0.5, -Defs.TILE * 0.5), word)
 
 static func reset() -> void:
+	ShipHazards.reset()
 	occupied.clear()
 	slots.clear()
 
@@ -122,6 +123,17 @@ static func ensure(sh: Airship) -> void:
 	mark.z_index = 1
 	Game.view.add_child(mark)
 	sh.lower_parts.append(mark)
+	var water := ShipHazards.WaterFx.new()
+	water.sh = sh
+	water.z_index = 1
+	Game.view.add_child(water)
+	sh.lower_parts.append(water)
+	if Proto.has("bilge_pump"):
+		# beside the stair, where somebody will trip over it at the wrong moment
+		var pump := Proto.spawn("bilge_pump", sh.lower_stair + Vector2i(0, 1) if not custom else sh.lower_stair + Vector2i(1, 0))
+		if pump != null:
+			pump.tags["lower_ship"] = sh.id
+			sh.lower_parts.append(pump)
 	for c in touched:
 		if Game.atmos != null and Game.atmos.map != null:
 			Game.atmos.retile(c)

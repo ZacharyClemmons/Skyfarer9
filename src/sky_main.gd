@@ -292,6 +292,9 @@ func _ready() -> void:
 		elif args.has("boardtest"):
 			auto_quit = -1.0
 			add_child(BoardTest.new())
+		elif args.has("hazardtest"):
+			auto_quit = -1.0
+			add_child(HazardTest.new())
 		elif args.has("decktest"):
 			auto_quit = -1.0
 			var test := DeckTest.new()

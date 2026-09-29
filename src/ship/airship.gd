@@ -89,6 +89,8 @@ var lower_cells: Array = [] # the instanced, physically separate deck below
 var lower_stair := Vector2i(-1, -1)
 var upper_stair_local := Vector2i(-9999, -9999)
 var lower_parts: Array = []
+var bilge := 0.0 # 0..1 how much water is standing on the lower deck
+var seam := 0.0 # 0..1 how badly her seams weep; a crash or a flogging in a gale opens them
 var lower_plan := {} # local hull cell -> lower floor or wall glyph
 var lower_entry_local := Vector2i(-9999, -9999)
 var inside_cells: Array = [] # walkable, sealed
@@ -939,6 +941,7 @@ func mass() -> float:
 				m += 0.15 * float(it.w_class if it != null else 2)
 			elif e.has_c(&"storage"):
 				m += 2.0
+	m += bilge * hull_mass() * 0.10 # standing water is weight
 	# Ballast is the pilot's main trim control: a hull floats high with full cells, and you
 	# pump water in to hold it level. Holding a steady altitude is a thing you actively do.
 	_mass_cache = m
@@ -1614,6 +1617,7 @@ func _collide(d: Vector2i) -> void:
 	Sfx.play("explosion", center(), 0.7)
 	if Game.view:
 		Game.view.shake(6.0)
+	seam = minf(1.0, seam + force * 0.006)
 	# stove in the hull on the side that hit
 	var hits := 0
 	for c in cells:
@@ -1643,6 +1647,9 @@ func breach(c: Vector2i) -> void:
 	map.set_turf(c, Defs.T_DECK_OPEN)
 	map.set_structure(c, Defs.S_NONE)
 	_breaches += 1
+	seam = minf(1.0, seam + 0.04)
+	if Game.rng.randf() < 0.35 and Game.atmos != null:
+		Game.atmos.ignite(c, null, 3.0) # splinters, sparks, a lamp let go
 	for f in _footprint:
 		if f["cell"] == c:
 			f["turf"] = f["turf"] # footprint keeps the original ground; the hull is what changed

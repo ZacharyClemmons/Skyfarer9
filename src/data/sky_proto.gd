@@ -185,6 +185,9 @@ one that does not cost fuel.", "sheet": "objects", "spr": "ballast_tank",
 		"comps": {"furniture": {"kind": "bed"}}},
 	"workbench": {"name": "workbench", "desc": "Vices, a cluttered rack, and every tool aboard that has not been lost yet.", "sheet": "objects", "spr": "table_wood",
 		"comps": {"blocker": {"dense": true}, "furniture": {"kind": "table"}}},
+	"bilge_pump": {"name": "bilge pump", "desc": "A cast-iron hand pump on a stand, with a leather bucket-chain and a lot of scratches from people who \
+left it until the water was over their boots. Planks and a caulking mallet hang from its rail.", "sheet": "objects", "spr": "cargo_winch",
+		"comps": {"blocker": {"dense": true}, "bilge_pump": {}}},
 	"galley_stove": {"name": "galley stove", "desc": "Gimballed, so a pot stays put while the ship does not.", "sheet": "objects", "spr": "galley_stove",
 		"comps": {"blocker": {"dense": true}, "cooker": {}, "machine": {"needs_power": false, "hp": 140}}},
 }
