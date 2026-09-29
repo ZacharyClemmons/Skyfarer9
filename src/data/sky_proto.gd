@@ -188,6 +188,8 @@ one that does not cost fuel.", "sheet": "objects", "spr": "ballast_tank",
 	"bilge_pump": {"name": "bilge pump", "desc": "A cast-iron hand pump on a stand, with a leather bucket-chain and a lot of scratches from people who \
 left it until the water was over their boots. Planks and a caulking mallet hang from its rail.", "sheet": "objects", "spr": "cargo_winch",
 		"comps": {"blocker": {"dense": true}, "bilge_pump": {}}},
+	"hull_breach": {"name": "hole in the hull", "desc": "Splintered planking and a view of the sky. Wind is coming in. A few planks and a hammer would close it.",
+		"sheet": "objects", "spr": "scorch_0", "z": -2, "comps": {"breach_patch": {}}},
 	"galley_stove": {"name": "galley stove", "desc": "Gimballed, so a pot stays put while the ship does not.", "sheet": "objects", "spr": "galley_stove",
 		"comps": {"blocker": {"dense": true}, "cooker": {}, "machine": {"needs_power": false, "hp": 140}}},
 }

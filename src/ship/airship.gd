@@ -1645,8 +1645,16 @@ func breach(c: Vector2i) -> void:
 	var map := Game.map
 	if not map.inb(c):
 		return
+	var was_turf: int = map.get_turf(c)
+	var was_struct: int = map.structure[map.idx(c)]
 	map.set_turf(c, Defs.T_DECK_OPEN)
 	map.set_structure(c, Defs.S_NONE)
+	# leave a mark that can be patched with planks: it remembers what the tile was
+	if Proto.has("hull_breach") and was_turf != Defs.T_DECK_OPEN:
+		var hole := Proto.spawn("hull_breach", c)
+		if hole != null:
+			hole.tags["was_turf"] = was_turf
+			hole.tags["was_struct"] = was_struct
 	_breaches += 1
 	seam = minf(1.0, seam + 0.04)
 	if Game.rng.randf() < 0.35 and Game.atmos != null:

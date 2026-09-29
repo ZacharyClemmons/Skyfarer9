@@ -42,7 +42,7 @@ func caulk(user: Entity) -> void:
 	if sh.seam <= 0.02:
 		Game.tell(user, "The seams are tight. Nothing to caulk.", "info")
 		return
-	var inv: CInventory = user.c(&"inventory")
+	var inv: CInventory = user.c(&"inv")
 	var plank: Entity = inv.find_item(func(it): return it.proto == "sheet_wood") if inv != null else null
 	if plank == null:
 		Game.tell(user, "You need wooden planks to caulk a seam properly.", "warn")
