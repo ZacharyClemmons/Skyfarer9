@@ -158,6 +158,7 @@ var _tick_t := 0.0
 var _geom_dirty := true
 var _sealed := {}
 var _leaks := {}
+var _draught := {}
 var _closing := false
 var _btn_shake := 0.0
 var _want_fit := false
@@ -407,7 +408,7 @@ func _build_ui() -> void:
 	mirror_btn.toggle_mode = true
 	mirror_btn.button_pressed = true
 	_footer_btn("Wrap hull [F]", func(): _wrap_hull(), "Put bulwark all the way round the deck you have drawn. (F)")
-	leaks_btn = _footer_btn("Find leaks [L]", func(): _toggle_leaks(), "Highlight every cabin tile that is still open to the weather. (L)")
+	leaks_btn = _footer_btn("Leaks & draughts [L]", func(): _toggle_leaks(), "Highlight every cabin tile that is open to the weather (red) and the draught the wind will carry in behind it (blue). (L)")
 	leaks_btn.toggle_mode = true
 	undo_btn = _footer_btn("Undo", func(): _do_undo(), "Ctrl+Z")
 	redo_btn = _footer_btn("Redo", func(): _do_redo(), "Ctrl+Y")
@@ -800,6 +801,7 @@ func _geom() -> void:
 	_leaks.clear()
 	for k in ShipPlan.leaks_of(cells):
 		_leaks[k] = true
+	_draught = ShipSurvey.draught_map(cells)
 
 func _module_of(key: Vector2i, glyph: String) -> String:
 	if fittings.has(key):
@@ -875,6 +877,19 @@ func _draw_board_inner() -> void:
 		Art.draw_cell(cv, Rect2(dp, Vector2(z, z) * s), dk, String(d[1]), String(d[2]), {}, false, Color(1, 1, 1, 1.0 - t))
 	# ---- the leak overlay: pulsing, with air visibly escaping
 	if show_leaks:
+		# the draught behind each opening: how far the wind will carry into the ship
+		for dk2 in _draught:
+			if _leaks.has(dk2):
+				continue
+			var dp2 := _pos_of(dk2)
+			if dp2.x < -z or dp2.y < -z or dp2.x > sz.x or dp2.y > sz.y:
+				continue
+			var ds: float = _draught[dk2]
+			cv.draw_rect(Rect2(dp2, Vector2(z, z)), Color(0.35, 0.65, 1.0, 0.10 + 0.32 * ds))
+			var sway := sin(_time * 4.0 + float(dk2.x + dk2.y) * 0.9) * z * 0.12
+			for li in 2:
+				var ly := dp2.y + z * (0.33 + 0.34 * float(li)) + sway
+				cv.draw_line(Vector2(dp2.x + z * 0.15, ly), Vector2(dp2.x + z * 0.85, ly + sway * 0.5), Color(0.8, 0.92, 1.0, 0.25 + 0.5 * ds), 2.0)
 		for key in _leaks:
 			var lp := _pos_of(key)
 			if lp.x < -z or lp.y < -z or lp.x > sz.x or lp.y > sz.y:
@@ -1561,7 +1576,7 @@ func _toggle_leaks() -> void:
 		leaks_btn.set_pressed_no_signal(show_leaks)
 	Sfx.play_ui(&"ui_tick", 0.8, 1.2 if show_leaks else 0.8)
 	if show_leaks:
-		_say("%d cabin tile%s open to the weather." % [n, "" if n == 1 else "s"] if n > 0 else "Not a leak on her. She is tight.")
+		_say("%d cabin tile%s open to the weather; wind will reach %d more." % [n, "" if n == 1 else "s", maxi(0, _draught.size() - n)] if n > 0 else "Not a leak on her. She is tight.")
 	else:
 		_say("")
 
@@ -1968,6 +1983,7 @@ func _measure() -> Dictionary:
 					break
 		if problem != "":
 			out["diag"].append({"severity": "error", "code": "lower_deck", "text": problem, "cells": []})
+	out["diag"].append_array(ShipSurvey.diagnose(cells, lower_plan, lower_entry_local))
 	out["price"] = _price(st)
 	_check(out, st, quirks)
 	return out

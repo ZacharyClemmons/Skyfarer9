@@ -19,6 +19,23 @@ func _run() -> void:
 	if sh == null:
 		get_tree().quit(1)
 		return
+	# --- the yard's survey, on a hand-drawn cabin with a missing wall
+	var plan := {}
+	for x in 8:
+		for y in 5:
+			plan[Vector2i(x, y)] = "#" if (x == 0 or y == 0 or x == 7 or y == 4) else "="
+	plan[Vector2i(0, 2)] = "="
+	plan[Vector2i(4, 2)] = "f"
+	plan[Vector2i(5, 2)] = "T"
+	var dm := ShipSurvey.draught_map(plan)
+	_check("survey finds the hole", not ShipPlan.leaks_of(plan).is_empty())
+	_check("survey carries the draught inward", dm.size() > 1)
+	var codes := []
+	for d in ShipSurvey.diagnose(plan, {}, Vector2i(-9999, -9999)):
+		codes.append(d["code"])
+	_check("survey warns of the draught", codes.has("draught"))
+	_check("survey warns of a stove by the bunker", codes.has("stove_fuel"))
+	_check("survey notes no lower deck", codes.has("no_hold"))
 	# --- wind
 	Game.sky.wind = Vector2(1.5, 0.0)
 	sh.vel = Vector2.ZERO
