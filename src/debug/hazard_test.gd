@@ -78,11 +78,14 @@ func _run() -> void:
 		Game.atmos.gas[Defs.G_SMOKE][lo] = 5.0
 		Game.atmos.temp[lo] = 420.0
 		var hi := Game.map.idx(top)
+		var roofed: bool = not Game.map.is_outdoor(top) and not Game.map.blocks_air(top)
 		var smoke0: float = Game.atmos.gas[Defs.G_SMOKE][hi]
 		var t0: float = Game.atmos.temp[hi]
 		ShipHazards.tick(sh, 0.5)
-		_check("smoke climbs the companionway", Game.atmos.gas[Defs.G_SMOKE][hi] > smoke0)
-		_check("heat climbs the companionway", Game.atmos.temp[hi] > t0)
+		_check("smoke leaves the galley by the companionway", Game.atmos.gas[Defs.G_SMOKE][lo] < 5.0)
+		if roofed:
+			_check("smoke climbs into a roofed stair", Game.atmos.gas[Defs.G_SMOKE][hi] > smoke0)
+			_check("heat climbs into a roofed stair", Game.atmos.temp[hi] > t0)
 		Game.atmos.ignite(sh.lower_stair + Vector2i(1, 0), null, 6.0)
 		ShipHazards.tick(sh, 0.5)
 		_check("fires below are counted", int(ShipHazards.state(sh)["fires"]) >= 0)

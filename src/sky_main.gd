@@ -145,7 +145,7 @@ func _ready() -> void:
 	Game.running = false
 	view.camera.position = Entity.cell_to_pos(gen.ship_start)
 
-	if args.has("autotest") or args.has("flighttest") or args.has("systemtest") or args.has("boardtest") or args.has("hudtest") or args.has("decktest"):
+	if args.has("autotest") or args.has("flighttest") or args.has("systemtest") or args.has("boardtest") or args.has("hudtest") or args.has("decktest") or args.has("hazardtest"):
 		_join({"name": "Test Hand", "appearance": Jobs.random_appearance(Game.rng), "job": "engineer", "pronoun": "they"})
 		auto_quit = float(args.get("autotest", "-1"))
 		shot_dir = args.get("shots", "")

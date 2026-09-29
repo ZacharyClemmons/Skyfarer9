@@ -273,20 +273,27 @@ static func _companionway(sh: Airship, dt: float) -> void:
 		return
 	var lo := map.idx(sh.lower_stair)
 	var hi := map.idx(top)
+	# a stair that comes up under a roof shares its air; one that comes up on open deck
+	# just lets the smoke out into the sky, where it is seen but not breathed
+	var roofed: bool = not map.is_outdoor(top) and not map.blocks_air(top)
 	var tl: float = atmos.temp[lo]
-	var th: float = atmos.temp[hi]
-	if tl > th + 4.0:
-		var j := (tl - th) * 260.0 * dt
-		atmos.add_heat(hi, j)
-		atmos.add_heat(lo, -j * 0.6)
+	if roofed:
+		var th: float = atmos.temp[hi]
+		if tl > th + 4.0:
+			var j := (tl - th) * 260.0 * dt
+			atmos.add_heat(hi, j)
+			atmos.add_heat(lo, -j * 0.6)
 	var smoke_lo: float = atmos.gas[Defs.G_SMOKE][lo]
 	if smoke_lo > 0.3:
 		var moved: float = smoke_lo * 0.25 * dt
-		atmos.add_gas(hi, Defs.G_SMOKE, moved, maxf(th, Defs.T20C))
 		atmos.gas[Defs.G_SMOKE][lo] = maxf(0.0, smoke_lo - moved)
-		atmos.mark_present(Defs.G_SMOKE)
+		if roofed:
+			atmos.add_gas(hi, Defs.G_SMOKE, moved, maxf(atmos.temp[hi], Defs.T20C))
+			atmos.mark_present(Defs.G_SMOKE)
+		elif Game.rng.randf() < dt * 0.8:
+			Fx.smoke_puff(top)
 		if sh.is_aboard(Game.player) and Game.player.cell.y < SkyGen.H and Game.rng.randf() < dt * 0.1:
-			Game.msg("[color=#b8a890]Smoke is rolling up the companionway.[/color]", "warn")
+			Game.msg("[color=#b8a890]Smoke is rolling up out of the companionway hatch.[/color]", "warn")
 
 # ------------------------------------------------------------------ bilge
 static func _bilge(sh: Airship, st: Dictionary, aw: float, dt: float) -> void:

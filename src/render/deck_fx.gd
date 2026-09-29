@@ -101,7 +101,7 @@ class Indicator extends CanvasLayer:
 		if sh == null or not sh.present or Game.player == null or not is_instance_valid(Game.player):
 			_lbl.visible = false
 			return
-		var aboard := Game.fleet != null and Game.fleet.ship_of(Game.player) == sh
+		var aboard: bool = Game.fleet != null and Game.fleet.ship_of(Game.player) == sh
 		if not aboard:
 			_lbl.visible = false
 			return
