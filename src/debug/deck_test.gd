@@ -38,7 +38,7 @@ func _run() -> void:
 	_check("player returns to same hull tile", p.cell == top and Game.fleet.ship_of(p) == sh)
 	await _shot("upper")
 	for c in sh.deck_cells:
-		if c != top and Game.map.is_passable(c) and Game.map.dense_count[Game.map.idx(c)] == 0:
+		if absi(c.x - top.x) + absi(c.y - top.y) > 1 and Game.map.is_passable(c) and Game.map.dense_count[Game.map.idx(c)] == 0:
 			p.place(c)
 			break
 	_check("ordinary deck tile is not a stair", not Underdecks.use(p))

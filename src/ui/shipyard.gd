@@ -639,7 +639,7 @@ func _seed_lower() -> void:
 	var best := 999999
 	lower_entry_local = Vector2i(-9999, -9999)
 	for k in lower_plan:
-		if String(lower_plan[k]) == "=" and String(cells.get(k, "")) in [",", "=", "+", "A", "h", "n"]:
+		if String(lower_plan[k]) == "=" and String(cells.get(k, "")) in [".", ",", "="]:
 			var score := absi(k.x) + absi(k.y)
 			if score < best:
 				best = score
@@ -1006,7 +1006,7 @@ func _place_reason(key: Vector2i, erase: bool) -> String:
 			return "Outside the hull."
 		if erase:
 			return "" if lower_plan.has(key) else "nothing"
-		if lower_brush == "stairs" and not String(cells.get(key, "")) in [",", "=", "+", "A", "h", "n"]:
+		if lower_brush == "stairs" and not String(cells.get(key, "")) in [".", ",", "="]:
 			return "Stairs need a walkable tile above."
 		return ""
 	if erase or (module_brush == "" and brush < BRUSHES.size() and String(BRUSHES[brush]["g"]) == ""):
@@ -1992,8 +1992,8 @@ func _measure() -> Dictionary:
 			problem = "Lower deck must fit in a 30 by 30 tile berth."
 		elif not lower_plan.has(lower_entry_local) or String(lower_plan.get(lower_entry_local, "")) != "=":
 			problem = "Place stairs on the lower deck."
-		elif not String(cells.get(lower_entry_local, "")) in [",", "=", "+", "A", "h", "n"]:
-			problem = "Stairs must meet a walkable tile above."
+		elif not String(cells.get(lower_entry_local, "")) in [".", ",", "="]:
+			problem = "Stairs must come up on clear deck or cabin floor — not under the wheel, a door or a fixture."
 		else:
 			for k in lower_plan:
 				if not cells.has(k):

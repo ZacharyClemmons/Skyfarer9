@@ -28,9 +28,23 @@ static func stair_at(c: Vector2i) -> bool:
 	if Game.fleet == null:
 		return false
 	for sh in Game.fleet.ships:
-		if sh.present and not sh.lower_cells.is_empty() and (c == sh.lower_stair or c == _upper_cell(sh)):
+		if sh.present and not sh.lower_cells.is_empty() and near_stair(sh, c) != "":
 			return true
 	return false
+
+## "down" if `c` is on or right beside the weather-deck end of the stair, "up" if it is on
+## or right beside the lower end, "" otherwise. Being next to it is enough: nobody should
+## have to land on one exact tile to be allowed to use a stair.
+static func near_stair(sh: Airship, c: Vector2i) -> String:
+	if sh == null or sh.lower_cells.is_empty():
+		return ""
+	var top := _upper_cell(sh)
+	if c.y < SkyGen.H:
+		if top.x >= 0 and absi(c.x - top.x) + absi(c.y - top.y) <= 1:
+			return "down"
+	elif sh.lower_stair.x >= 0 and absi(c.x - sh.lower_stair.x) + absi(c.y - sh.lower_stair.y) <= 1:
+		return "up"
+	return ""
 
 ## The ship's surface position for weather, fauna and traffic while somebody is below.
 static func world_cell(p: Entity) -> Vector2i:
@@ -59,7 +73,7 @@ static func ensure(sh: Airship) -> void:
 	var best := 1 << 30
 	if sh.lower_plan.has(sh.lower_entry_local):
 		var requested := sh.cell(sh.lower_entry_local.x, sh.lower_entry_local.y)
-		if sh.deck_cells.has(requested) and map.is_passable(requested) and map.dense_count[map.idx(requested)] == 0:
+		if (sh.deck_cells.has(requested) or sh.inside_cells.has(requested)) and map.is_passable(requested) and map.dense_count[map.idx(requested)] == 0:
 			upper = requested
 	for c in sh.deck_cells:
 		if upper.x >= 0:
@@ -163,10 +177,10 @@ static func ensure(sh: Airship) -> void:
 ## Shift+E on the stair. A shut hatch keeps smoke, heat and draught where they are and
 ## starves a galley fire of air, at the price of everyone below being shut in with it.
 static func toggle_hatch(p: Entity) -> bool:
-	if p == null or Game.fleet == null or not stair_at(p.cell):
+	if p == null or Game.fleet == null:
 		return false
 	var sh: Airship = Game.fleet.ship_of(p)
-	if sh == null or sh.lower_cells.is_empty():
+	if sh == null or sh.lower_cells.is_empty() or near_stair(sh, p.cell) == "":
 		return false
 	sh.hatch_shut = not sh.hatch_shut
 	Sfx.play("ratchet", p.cell, 0.7)
@@ -180,18 +194,17 @@ static func use(p: Entity) -> bool:
 	var sh: Airship = Game.fleet.ship_of(p)
 	if sh == null or sh.lower_cells.is_empty():
 		return false
-	if sh.hatch_shut and (p.cell == _upper_cell(sh) or p.cell == sh.lower_stair):
+	var way := near_stair(sh, p.cell)
+	if way == "":
+		return false
+	if sh.hatch_shut:
 		Game.tell(p, "The hatch is dogged shut. (Shift+E to open it.)", "warn")
 		return true
-	var dest := Vector2i(-1, -1)
-	var descending := false
-	if p.cell == _upper_cell(sh):
-		dest = sh.lower_stair
-		descending = true
-	elif p.cell == sh.lower_stair:
-		dest = _upper_cell(sh)
+	var descending := way == "down"
+	var dest := sh.lower_stair if descending else _upper_cell(sh)
 	if dest.x < 0 or not Game.map.is_passable(dest) or Game.map.dense_count[Game.map.idx(dest)] > 0:
-		return false
+		Game.tell(p, "Something is in the way at the bottom of the stair." if descending else "Something is blocking the top of the stair.", "warn")
+		return true
 	p.place(dest)
 	if p == Game.player:
 		Game.view.camera.position = p.position

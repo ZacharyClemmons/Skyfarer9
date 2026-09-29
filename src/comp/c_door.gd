@@ -20,6 +20,7 @@ var wires := {} # colour -> function ("power", "bolts", "open", "shock", "safety
 var cut := {} # colour -> true
 var bolted := false
 var shock_t := 0.0 # electrified for this long (INF while the shock wire is cut)
+var manual := false # a wooden ship door on hinges and a latch: works without any power
 var power_off_t := 0.0 # a pulsed power wire drops power for a while
 var broken := false # tg airlock atom_break (25% integrity): the electronics are dead
 const WIRE_COLOURS := ["red", "blue", "green", "yellow", "orange", "purple", "pink", "white"]
@@ -33,6 +34,7 @@ func setup(p: Dictionary) -> CDoor:
 	req_access = p.get("access", req_access).duplicate()
 	glass = p.get("glass", dept not in ["maint", "ext", "sec"])
 	external = dept == "ext"
+	manual = p.get("manual", false)
 	return self
 
 func on_added() -> void:
@@ -118,6 +120,8 @@ func is_open() -> bool:
 	return state == OPEN
 
 func powered() -> bool:
+	if manual:
+		return not broken
 	if broken or power_off_t > 0.0 or wire_cut("power"):
 		return false
 	var a := Game.map.area_at(e.cell)
