@@ -123,6 +123,12 @@ static func ensure(sh: Airship) -> void:
 	mark.z_index = 1
 	Game.view.add_child(mark)
 	sh.lower_parts.append(mark)
+	var back := DeckFx.Backdrop.new().setup(sh)
+	Game.view.add_child(back)
+	sh.lower_parts.append(back)
+	var tag := DeckFx.Indicator.new().setup(sh)
+	Game.view.add_child(tag)
+	sh.lower_parts.append(tag)
 	var water := ShipHazards.WaterFx.new()
 	water.sh = sh
 	water.z_index = 1
